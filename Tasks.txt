@@ -1,0 +1,29 @@
+Part 1:
+
+- Review M/M/n queues theory
+- Derive average waiting time formula (at least for n=2)
+
+Part 2:
+
+- Implement a DES program using SimPy
+- Simulate arrival and service processes of customers
+- Use exponential distribution for inter-arrival and service times
+- Use FIFO scheduling policy
+- Use mean and standard deviation of waiting time as performance metrics
+- Run simulation for different values of n, λ, and µ
+- Compare results with theoretical predictions
+- Use confidence intervals or hypothesis tests for statistical significance
+
+Part 3:
+
+- Modify DES program for SJF scheduling policy
+- Prioritize customers with shortest service time
+- Compare results with FIFO policy and M/M/1 queue theory
+
+Part 4:
+
+- Modify DES program for different service time distributions
+- Use constant service time for M/D/1 and M/D/n queues
+- Use hyperexponential distribution for long-tail distribution
+- Compare results with M/M/n queues and SJF policy
+- Analyze effect of service time distribution on waiting time variability and predictability

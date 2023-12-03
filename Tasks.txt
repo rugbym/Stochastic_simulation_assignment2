@@ -5,11 +5,11 @@ Part 1:
 
 Part 2:
 
-- Implement a DES program using SimPy 
-- Simulate arrival and service processes of customers 
-- Use exponential distribution for inter-arrival and service times
-- Use FIFO scheduling policy
-- Use mean and standard deviation of waiting time as performance metrics
+- Implement a DES program using SimPy                 Done
+- Simulate arrival and service processes of customers           Done
+- Use exponential distribution for inter-arrival and service times          Done
+- Use FIFO scheduling policy         Done
+- Use mean and standard deviation of waiting time as performance metrics      
 - Run simulation for different values of n, λ, and µ, thus varying rho
 - Compare results with theoretical predictions
 - Use confidence intervals or hypothesis tests for statistical significance

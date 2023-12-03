@@ -57,24 +57,24 @@ def get_user_input():
     return params
 
 
+if __name__ == "__main__":
+    random.seed(42)
+    num_server = [1,2,4]
+    for cashiers in num_server:
+        # Setup
+        num_cashiers = cashiers
+        lamda=1
+        mu =1
 
-random.seed(42)
-num_server = [1,2,4]
-for cashiers in num_server:
-    # Setup
-    num_cashiers = cashiers
-    lamda=1
-    mu =1
 
+        # Run the simulation
+        env = simpy.Environment()
+        env.process(run_theater(env, num_cashiers, lamda, mu))
+        env.run(until=90)
 
-    # Run the simulation
-    env = simpy.Environment()
-    env.process(run_theater(env, num_cashiers, lamda, mu))
-    env.run(until=90)
-
-    # View the results
-    mins, secs = get_average_wait_time(wait_times)
-    print(
-        "Running simulation...",
-        f"\nThe average wait time for {cashiers} cashier(s) is {mins} minutes and {secs} seconds.",
-    )
+        # View the results
+        mins, secs = get_average_wait_time(wait_times)
+        print(
+            "Running simulation...",
+            f"\nThe average wait time for {cashiers} cashier(s) is {mins} minutes and {secs} seconds.",
+        )

@@ -1,9 +1,11 @@
 import simpy
 import random
 import statistics
+import numpy as np
+import matplotlib.pyplot as plt
 
 
-wait_times = []
+
 
 
 class Theater(object):
@@ -17,7 +19,7 @@ class Theater(object):
         yield self.env.timeout(random.expovariate(self.mu))
 
 
-def go_to_movies(env, moviegoer, theater):
+def go_to_movies(env, moviegoer, theater, wait_times):
     # Moviegoer arrives at the theater
     arrival_time = env.now
 
@@ -30,51 +32,93 @@ def go_to_movies(env, moviegoer, theater):
     wait_times.append(env.now - arrival_time)
 
 
-def run_theater(env, num_cashiers, lamda, mu):
+def run_theater(env, num_cashiers, lamda, mu, wait_times):
     theater = Theater(env, num_cashiers, lamda)
 
-    for moviegoer in range(3):
-        env.process(go_to_movies(env, moviegoer, theater))
+    # start with 3 moviegoers already
+    # for moviegoer in range(3):
+    #     env.process(go_to_movies(env, moviegoer, theater))
 
+
+    moviegoer = 0 
     while True:
         yield env.timeout(random.expovariate(lamda))  # Wait a bit before generating a new person
 
         moviegoer += 1
-        env.process(go_to_movies(env, moviegoer, theater))
+        env.process(go_to_movies(env, moviegoer, theater, wait_times))
 
 
 def get_average_wait_time(wait_times):
     average_wait = statistics.mean(wait_times)
     # Pretty print the results
-    minutes, frac_minutes = divmod(average_wait, 1)
-    seconds = frac_minutes * 60
-    return round(minutes), round(seconds)
+    # minutes, frac_minutes = divmod(average_wait, 1)
+    # seconds = frac_minutes * 60
+    # return round(minutes), round(seconds)
+    return average_wait
 
 
-def get_user_input():
-    num_cashiers = input("Input # of cashiers working: ")
-    params = int(num_cashiers)
-    return params
+# def get_user_input():
+#     num_cashiers = input("Input # of cashiers working: ")
+#     params = int(num_cashiers)
+#     return params
 
 
-if __name__ == "__main__":
-    random.seed(42)
-    num_server = [1,2,4]
-    for cashiers in num_server:
-        # Setup
-        num_cashiers = cashiers
-        lamda=1
-        mu =1
+
+# random.seed(42)
+
+def run_simulations(steps, num_samples, num_cashiers):
+    rho_list = []
+    mu_list = []
+    lamda_list = []
+    averages_of_average_wait_times = []
+
+    for rho in np.linspace(0.1,1,steps):
+    
+        mu = 1
+        lamda = rho * mu
+        average_wait_times=[]
+        for _ in range(num_samples):
+            wait_times = []
+
+            env = simpy.Environment()
+            env.process(run_theater(env, num_cashiers, lamda, mu, wait_times))
+            env.run(until=900)
+
+            average_wait = get_average_wait_time(wait_times)
+            average_wait_times.append(average_wait)
+
+        rho_list.append(rho)
+        mu_list.append(mu)
+        lamda_list.append(lamda)
+        averages_of_average_wait_times.append(statistics.mean(average_wait_times))
+
+    std = np.std(averages_of_average_wait_times)
+
+    return averages_of_average_wait_times, std, rho_list, mu_list, lamda_list
+
+averages_of_average_wait_times, std, rho_list, mu_list, lamda_list = run_simulations(30,30,1)
+
+plt.errorbar(rho_list, averages_of_average_wait_times, yerr=std, fmt="o")
+plt.show()
 
 
-        # Run the simulation
-        env = simpy.Environment()
-        env.process(run_theater(env, num_cashiers, lamda, mu))
-        env.run(until=90)
 
-        # View the results
-        mins, secs = get_average_wait_time(wait_times)
-        print(
-            "Running simulation...",
-            f"\nThe average wait time for {cashiers} cashier(s) is {mins} minutes and {secs} seconds.",
-        )
+# num_server = [1,2,4]
+# for cashiers in num_server:
+#     # Setup
+#     num_cashiers = cashiers
+#     lamda=1
+#     mu =1
+
+
+#     # Run the simulation
+#     env = simpy.Environment()
+#     env.process(run_theater(env, num_cashiers, lamda, mu))
+#     env.run(until=90)
+
+#     # View the results
+#     mins, secs = get_average_wait_time(wait_times)
+#     print(
+#         "Running simulation...",
+#         f"\nThe average wait time for {cashiers} cashier(s) is {mins} minutes and {secs} seconds.",
+#     )

@@ -11,7 +11,7 @@ def average_number_of_people_in_system(lamda,mu):
     Returns:
         float: Average number of people in system
     """
-    rho = lamda/mu
+    rho = lamda/(mu)
     return rho/(1-rho)
 
 def average_waiting_time(lamda,mu):
@@ -25,7 +25,7 @@ def average_waiting_time(lamda,mu):
     Returns:
         float: Average waiting time
     """
-    rho = lamda/mu
+    rho = lamda/(mu)
     return rho/mu/(1-rho)
 
 # for m/m/n systems we define the following functions
@@ -45,7 +45,7 @@ def p_0(lamda,mu,n):
     if n==1:
         return 1 - lamda/mu
     else:
-        rho = lamda/mu
+        rho = lamda/(mu*n)
         summation = (sum([(n * rho)**i/np.math.factorial(i) for i in range(n)]) + (n * rho)**n/(np.math.factorial(n)*(1-rho)))
         return 1/ summation
 
@@ -62,7 +62,7 @@ def p_k(lamda,mu,k,n=1):
     Returns:
         float: Probability of having k people in the system
     """
-    rho = lamda/mu
+    rho = lamda/(mu*n)
     if n ==1:
         p_k = rho**k * p_0(lamda,mu,n)
     else:
@@ -81,7 +81,7 @@ def waiting_probability(lamda,mu,n):
     Returns:
         float: Probability of waiting
     """
-    rho = lamda/mu
+    rho = lamda/(mu*n)
     P = p_k(lamda,mu,n,n)/(1-rho)
     return P
 
@@ -97,5 +97,5 @@ def average_waiting_time_mmn(lamda,mu,n):
     Returns:
         float: Average waiting time
     """
-    rho = lamda/mu
+    rho = lamda/(mu*n)
     return waiting_probability(lamda,mu,n)/(n*mu*(1-rho))

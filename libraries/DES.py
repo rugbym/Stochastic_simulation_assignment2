@@ -1,9 +1,9 @@
 import simpy
 import random
 import statistics
+from theoretical_results import *
 
 
-wait_times = []
 
 
 class Theater(object):
@@ -59,22 +59,28 @@ def get_user_input():
 
 if __name__ == "__main__":
     random.seed(42)
+    n_runs = 1
     num_server = [1,2,4]
     for cashiers in num_server:
         # Setup
         num_cashiers = cashiers
-        lamda=1
-        mu =1
+        lamda=.5
+        mu =1.
 
-
+        for _ in range(n_runs):
         # Run the simulation
-        env = simpy.Environment()
-        env.process(run_theater(env, num_cashiers, lamda, mu))
-        env.run(until=90)
+            wait_times = []
+            env = simpy.Environment()
+            env.process(run_theater(env, num_cashiers, lamda, mu))
+            env.run(until=1000)
 
-        # View the results
-        mins, secs = get_average_wait_time(wait_times)
-        print(
-            "Running simulation...",
-            f"\nThe average wait time for {cashiers} cashier(s) is {mins} minutes and {secs} seconds.",
-        )
+            # View the results
+            
+            mins, secs = get_average_wait_time(wait_times)
+        
+            print(
+                "Running simulation...",
+                f"\nThe average wait time for {cashiers} cashier(s) is {mins} minutes and {secs} seconds.",
+            )
+            
+            print("Theoretical result: ",average_waiting_time_mmn(lamda,mu,cashiers))

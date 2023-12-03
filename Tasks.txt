@@ -1,7 +1,22 @@
+Abstract:
+- Summarize Introduction
+- Summarize findings
+- Summarize and highlight conclusion
+
+Introduction:
+- Find subject to relate this report to
+- Write an overview of the report with the subjects we touch upon
+
+Theory/methods:
+- 
+- 
+
 Part 1:
 - Review M/M/1 queues theory (done)
+- Summarize the process and results in accesible language
 - Review M/M/n queues theory 
 - Derive average waiting time formula (at least for n=2)
+- Summarize the process and results in accesible language
 
 Part 2:
 

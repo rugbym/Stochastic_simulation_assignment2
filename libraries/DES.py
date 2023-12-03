@@ -4,7 +4,7 @@ import statistics
 import numpy as np
 import matplotlib.pyplot as plt
 
-from theoretical_results import *
+from .theoretical_results import *
 
 
 
@@ -34,7 +34,7 @@ def go_to_movies(env, moviegoer, theater, wait_times):
 
 
 def run_theater(env, num_cashiers, lamda, mu, wait_times):
-    theater = Theater(env, num_cashiers, lamda)
+    theater = Theater(env, num_cashiers, mu)
 
     # start with 3 moviegoers already
     # for moviegoer in range(3):
@@ -72,12 +72,13 @@ def run_simulations(steps, num_samples, num_cashiers):
     mu_list = []
     lamda_list = []
     averages_of_average_wait_times = []
-
+    std = []
     for rho in np.linspace(0.1,1,steps):
     
         mu = 1
         lamda = rho * mu
         average_wait_times=[]
+        
         for _ in range(num_samples):
             wait_times = []
 
@@ -93,14 +94,14 @@ def run_simulations(steps, num_samples, num_cashiers):
         lamda_list.append(lamda)
         averages_of_average_wait_times.append(statistics.mean(average_wait_times))
 
-    std = np.std(averages_of_average_wait_times)
+        std.append( np.std(average_wait_times))
 
     return averages_of_average_wait_times, std, rho_list, mu_list, lamda_list
+if __name__ == "__main__":
+    averages_of_average_wait_times, std, rho_list, mu_list, lamda_list = run_simulations(30,30,1)
 
-averages_of_average_wait_times, std, rho_list, mu_list, lamda_list = run_simulations(30,30,1)
-
-plt.errorbar(rho_list, averages_of_average_wait_times, yerr=std, fmt="o")
-plt.show()
+    plt.errorbar(rho_list, averages_of_average_wait_times, yerr=std, fmt="o")
+    plt.show()
 
 
 

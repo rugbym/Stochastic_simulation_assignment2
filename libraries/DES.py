@@ -3,8 +3,8 @@ import random
 import statistics
 import numpy as np
 import matplotlib
-
-matplotlib.use("TkAgg")
+if __name__ == "__main__":
+    matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from theoretical_results import *
 

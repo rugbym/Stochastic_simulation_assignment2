@@ -6,7 +6,6 @@ import matplotlib
 if __name__ == "__main__":
     matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-from theoretical_results import *
 
 
 class ServerRoom(object):
@@ -44,7 +43,7 @@ class ServerRoom(object):
             job (int): Job number
 
         Yields:
-            simpy.events.Timeout: [description]
+            simpy.events.Timeout: time it takes to process the job
         """
         if self.queuetype[1] == "M":
             yield self.env.timeout(random.expovariate(self.mu))
@@ -67,7 +66,8 @@ def arrivals(env, job, servers, wait_times):
         wait_times (list): List of wait times
     
     Yields:
-        simpy.events.Timeout: [description]
+        env.timeout: Time it takes for the job to arrive
+        env.process: Service process
 
     """
     arrival_time = env.now
@@ -117,18 +117,30 @@ def get_average_wait_time(wait_times):
     average_wait = statistics.mean(wait_times)
     return average_wait
 
+def run_simulations(rho_steps, num_samples, num_servers, policy,queuetype="MM"):
+    """Runs the simulation for a given number of steps and samples
 
+    Args:
+        steps (int): Number of steps
+        num_samples (int): Number of samples
+        num_servers (int): Number of servers
+        policy (str): Scheduling policy
+        queuetype (str, optional): Type of queue. Defaults to "MM". Options are "MM", "MD", "MC".
 
-
-
-def run_simulations(steps, num_samples, num_servers, policy,queuetype="MM"):
+    Returns:
+        list: Average wait times
+        list: Standard deviations
+        list: System loads
+        list: Service rates
+        list: Arrival rates
+    """
     rho_list = []
     mu_list = []
     lamda_list = []
     averages_of_average_wait_times = []
     std_devs = []
 
-    for rho in np.linspace(0.1, 1, steps):
+    for rho in np.linspace(0.1, 1, rho_steps):
         mu = 1
         lamda = rho * mu
         average_wait_times = []
@@ -150,18 +162,18 @@ def run_simulations(steps, num_samples, num_servers, policy,queuetype="MM"):
 
 
 if __name__ == "__main__":
-    #policies = ["FIFO", "SJF"]
+    policies = ["FIFO", "SJF"]
     queuetypes = ["MM", "MD", "MC"]
     num_workers = [1]#, 2, 4]
     plt.figure()
-
+    policy = policies[0]
     for worker in num_workers:
         for queuetype in queuetypes:
             averages, std_devs, rhos, mus, lamdas = run_simulations(
-                30, 30, worker, policy="FIFO", queuetype=queuetype
+                30, 30, worker, policy=policy, queuetype=queuetype
             )
 
-            marker = "o" #if policy == "FIFO" else "s"
+            marker = "o" if policy == "FIFO" else "s"
             plt.errorbar(rhos, averages, yerr=std_devs, fmt=marker, label=queuetype)
 
         plt.xlabel("System Load (ρ)")

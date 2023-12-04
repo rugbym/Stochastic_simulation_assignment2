@@ -84,7 +84,7 @@ def arrivals(env, job, servers, wait_times):
     wait_times.append(env.now - arrival_time)
 
 
-def run_server(env, num_servers, lamda, mu, wait_times, policy):
+def run_server(env, num_servers, lamda, mu, wait_times, policy, queuetype="MM"):
     """Create a server, a number of initial jobs and keep creating jobs
     approx. every ``1 / lamda`` minutes.
 
@@ -96,7 +96,7 @@ def run_server(env, num_servers, lamda, mu, wait_times, policy):
         wait_times (list): List of wait times
         policy (str): Scheduling policy
     """
-    servers = ServerRoom(env, num_servers, mu, policy)
+    servers = ServerRoom(env, num_servers, mu, policy, queuetype)
     job = 0
 
     while True:
@@ -121,7 +121,7 @@ def get_average_wait_time(wait_times):
 
 
 
-def run_simulations(steps, num_samples, num_servers, policy):
+def run_simulations(steps, num_samples, num_servers, policy,queuetype="MM"):
     rho_list = []
     mu_list = []
     lamda_list = []
@@ -136,7 +136,7 @@ def run_simulations(steps, num_samples, num_servers, policy):
         for _ in range(num_samples):
             wait_times = []
             env = simpy.Environment()
-            env.process(run_server(env, num_servers, lamda, mu, wait_times, policy))
+            env.process(run_server(env, num_servers, lamda, mu, wait_times, policy,queuetype=queuetype))
             env.run(until=900)
             average_wait = get_average_wait_time(wait_times)
             average_wait_times.append(average_wait)
@@ -150,18 +150,19 @@ def run_simulations(steps, num_samples, num_servers, policy):
 
 
 if __name__ == "__main__":
-    policies = ["FIFO", "SJF"]
-    num_workers = [1, 2, 4]
+    #policies = ["FIFO", "SJF"]
+    queuetypes = ["MM", "MD", "MC"]
+    num_workers = [1]#, 2, 4]
     plt.figure()
 
     for worker in num_workers:
-        for policy in policies:
+        for queuetype in queuetypes:
             averages, std_devs, rhos, mus, lamdas = run_simulations(
-                30, 30, worker, policy
+                30, 30, worker, policy="FIFO", queuetype=queuetype
             )
 
-            marker = "o" if policy == "FIFO" else "s"
-            plt.errorbar(rhos, averages, yerr=std_devs, fmt=marker, label=policy)
+            marker = "o" #if policy == "FIFO" else "s"
+            plt.errorbar(rhos, averages, yerr=std_devs, fmt=marker, label=queuetype)
 
         plt.xlabel("System Load (ρ)")
         plt.ylabel("Average Wait Time")

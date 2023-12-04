@@ -1,5 +1,5 @@
 import numpy as np
-
+# for m/m/1 systems we define the following functions
 def average_number_of_people_in_system(lamda,mu):
     """Returns the average number of people in a M/M/1 queueing system
     with arrival rate lamda and service rate mu
@@ -66,7 +66,10 @@ def p_k(lamda,mu,k,n=1):
     if n ==1:
         p_k = rho**k * p_0(lamda,mu,n)
     else:
-        p_k = (n * rho)**k/np.math.factorial(k) * p_0(lamda,mu,n)
+        if k<n:
+            p_k = p_0(lamda,mu,n) * (n * rho)**k/np.math.factorial(k)
+        else:
+            p_k =  p_0(lamda,mu,n) * (n**n * rho**k)/np.math.factorial(n) 
     return p_k
 
 def waiting_probability(lamda,mu,n):
